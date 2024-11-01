@@ -3,3 +3,5 @@ FoFR/*.dat
 
 *.csv
 FoFR/*.csv
+
+*.venv/*
