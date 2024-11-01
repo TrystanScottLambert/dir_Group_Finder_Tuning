@@ -2,6 +2,7 @@
 library(FoF)
 library(celestial)
 library(data.table)
+library(yaml)
 
 #
 # Create the interpolated functions which will be used in the final implementation.
@@ -97,14 +98,26 @@ g09 = fread('../cut_9.dat')
 g09[,'AB_r'] = g09[,Rpetro] - z_to_dmod(g09[,Z])
 g09 = as.data.frame(g09)
 #I'm just assuming 100% completeness and I should have a look at the way Aaron does the completeness stuff.
-optuse=c(0.05, 23, 0, 0, 0.8, 9.0000, 1.5000, 12.0000)
+#
+#
+### Reading in the parameters that need to be optimized by the emcee routine ###
+params = yaml.load_file('parameters.yml')
+#optuse=c(0.05, 23, 0, 0, 0.8, 9.0000, 1.5000, 12.0000)
+
 data(circsamp)
 cat=FoFempint(
-data=g09, bgal=optuse[1], rgal=optuse[2], Eb=optuse[3], Er=optuse[4], 
+data=g09, bgal=params$b_gal, rgal=params$r_gal, Eb=params$Eb, Er=params$Er, 
   coscale=T, NNscale=3, groupcalc=T, precalc=F, halocheck=F, apmaglim=19.8, colnames=colnames(g09), 
   denfunc=LFswmlfunc, intfunc=RunningDensity_z, intLumfunc=LFswmlintfuncLum, 
   useorigind=F,dust=0,scalemass=1,scaleflux=1,extra=F,
-  MagDenScale=optuse[5],deltacontrast=optuse[6],deltarad=optuse[7],deltar=optuse[8],
+  MagDenScale=params$mag_den_scale,deltacontrast=params$delta_contrast,deltarad=params$detla_rad,deltar=params$delta_r,
   circsamp=circsamp,Mmax=1e15, zvDmod = z_to_dmod, Dmodvz = dmod_to_z,
   left=129, right=141, top = 3, bottom = -2)
+
+
+# Write the group_references to file (used for tuning)
+# Convert grefs to a data frame to preserve the column structure
+grefs_df <- as.data.frame(cat$grefs)
+# Write the data frame to file with columns side-by-side
+write.table(grefs_df, file = "GAMA_FoFR_run.dat", row.names = FALSE, col.names = FALSE)
 
