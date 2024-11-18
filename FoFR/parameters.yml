@@ -3,6 +3,6 @@ r_gal: 22
 Eb: 0
 Er: 0
 mag_den_scale: 0.7
-delta_contrast: 8
+delta_contrast: 8.0
 detla_rad: 1.4
-delta_r: 11
+delta_r: 11.0

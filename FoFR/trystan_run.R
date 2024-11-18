@@ -94,25 +94,26 @@ RunningDensity_z = approxfun(distfunc_D2z(temp$x), GalRanCounts*tempint/RunningV
 ###########################
 
 # read in the data
-g09 = fread('../cut_9.dat')
-g09[,'AB_r'] = g09[,Rpetro] - z_to_dmod(g09[,Z])
+g09 = fread('./deep_field_group_finding.dat')
+g09[,'AB_r'] = g09[,r_VST_ap] - z_to_dmod(g09[,zobs])
 g09 = as.data.frame(g09)
 #I'm just assuming 100% completeness and I should have a look at the way Aaron does the completeness stuff.
 #
 #
 ### Reading in the parameters that need to be optimized by the emcee routine ###
 params = yaml.load_file('parameters.yml')
-#optuse=c(0.05, 23, 0, 0, 0.8, 9.0000, 1.5000, 12.0000)
+optuse=c(0.05, 23, 0, 0, 0.8, 9.0000, 1.5000, 12.0000)
+#optuse = c(params$b_gal, params$r_gal, params$Eb, params$Er, params$mag_den_scale, params$delta_contrast, params$delta_rad, params$delta_r)
 
 data(circsamp)
 cat=FoFempint(
-data=g09, bgal=params$b_gal, rgal=params$r_gal, Eb=params$Eb, Er=params$Er, 
+data=g09, bgal=optuse[1], rgal=optuse[2], Eb=optuse[3], Er=optuse[4], 
   coscale=T, NNscale=3, groupcalc=T, precalc=F, halocheck=F, apmaglim=19.8, colnames=colnames(g09), 
   denfunc=LFswmlfunc, intfunc=RunningDensity_z, intLumfunc=LFswmlintfuncLum, 
-  useorigind=F,dust=0,scalemass=1,scaleflux=1,extra=F,
-  MagDenScale=params$mag_den_scale,deltacontrast=params$delta_contrast,deltarad=params$detla_rad,deltar=params$delta_r,
+  useorigind=T,dust=0,scalemass=1,scaleflux=1,extra=F,
+  MagDenScale=optuse[5],deltacontrast=optuse[6],deltarad=optuse[7],deltar=optuse[8],
   circsamp=circsamp,Mmax=1e15, zvDmod = z_to_dmod, Dmodvz = dmod_to_z,
-  left=129, right=141, top = 3, bottom = -2)
+  left=211.5, right=223.5, top = 2.47, bottom = -2.54)
 
 
 # Write the group_references to file (used for tuning)
