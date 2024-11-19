@@ -1,8 +1,8 @@
-b_gal: 0.04
-r_gal: 22
-Eb: 0
-Er: 0
-mag_den_scale: 0.7
-delta_contrast: 8.0
-detla_rad: 1.4
-delta_r: 11.0
+b_gal:  0.02103020046970099
+r_gal: 19.901032461186063
+Eb: 0.8581474190052295
+Er: 0.2565647041065874
+mag_den_scale: 1.955683381143059
+delta_contrast: 9.420287055247645
+delta_rad: 2.2245650867698723
+delta_r: 11.012345187066447

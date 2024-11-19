@@ -4,21 +4,14 @@ library(celestial)
 library(data.table)
 library(yaml)
 
-# Parse command-line arguments
-args <- commandArgs(trailingOnly = TRUE)
+#
+# Create the interpolated functions which will be used in the final implementation.
+#
 
-# Validate input
-if (length(args) != 2) {
-  stop("Usage: Rscript run_fofr.R <input_yaml_file> <output_file>")
-}
 
-input_file <- args[1]  # Path to the YAML parameter file
-output_file <- args[2] # Path to the output file
-
-# Create the interpolated functions which will be used
 redshift = seq(0, 1, by=1e-4)
-k_corrections <- {}
-for (i in 1:length(redshift)){
+k_corrections={}
+for(i in 1:length(redshift)){
   k_corrections = c(k_corrections, KEcorr(redshift[i])[2])} #K+E corrections
 
 # Creating the redshift to distance modulus and distance modulus to redshift functions.
@@ -108,12 +101,13 @@ g09 = as.data.frame(g09)
 #
 #
 ### Reading in the parameters that need to be optimized by the emcee routine ###
-params = yaml.load_file(input_file)
-print(params)
+params = yaml.load_file('parameters.yml')
+#optuse=c(0.05, 23, 0, 0, 0.8, 9.0000, 1.5000, 12.0000)
+#optuse = c(params$b_gal, params$r_gal, params$Eb, params$Er, params$mag_den_scale, params$delta_contrast, params$delta_rad, params$delta_r)
 
 data(circsamp)
 cat=FoFempint(
-  data=g09, bgal=params$b_gal, rgal=params$r_gal, Eb=params$Eb, Er=params$Er, 
+data=g09, bgal=params$b_gal, rgal=params$r_gal, Eb=params$Eb, Er=params$Er, 
   coscale=T, NNscale=3, groupcalc=T, precalc=F, halocheck=F, apmaglim=19.8, colnames=colnames(g09), 
   denfunc=LFswmlfunc, intfunc=RunningDensity_z, intLumfunc=LFswmlintfuncLum, 
   useorigind=T,dust=0,scalemass=1,scaleflux=1,extra=F,
@@ -125,4 +119,6 @@ cat=FoFempint(
 # Write the group_references to file (used for tuning)
 # Convert grefs to a data frame to preserve the column structure
 grefs_df <- as.data.frame(cat$grefs)
-write.table(grefs_df, file = output_file, row.names = FALSE, col.names = FALSE)
+# Write the data frame to file with columns side-by-side
+write.table(grefs_df, file = "GAMA_FoFR_run.dat", row.names = FALSE, col.names = FALSE)
+
