@@ -5,3 +5,6 @@ FoFR/*.dat
 FoFR/*.csv
 
 *.venv/*
+
+*.lintr
+FoFR/*.lintr
