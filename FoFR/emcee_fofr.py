@@ -177,8 +177,10 @@ def main():
     best_params = np.median(samples, axis=0)
     print("Best-fit parameters: ", best_params)
 
-    fig = corner.corner(samples, truths=best_params)
-    plt.show()
+    with open('best_params.dat', 'w', encoding='utf8') as file:
+        file.write(best_params)
+    _ = corner.corner(samples, truths=best_params)
+    plt.savefig('results.png')
 
 
 if __name__ == "__main__":
